@@ -111,7 +111,7 @@ export default function ExploreScreen() {
 
       // Get current GPS coordinates
       const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
+        accuracy: Location.Accuracy.High,
       });
       const { latitude: lat, longitude: lng } = location.coords;
 
@@ -161,7 +161,7 @@ export default function ExploreScreen() {
 
       // Get current GPS coordinates — location is always from device, not the image
       const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
+        accuracy: Location.Accuracy.High,
       });
       const { latitude: lat, longitude: lng } = location.coords;
 
