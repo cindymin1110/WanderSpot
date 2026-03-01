@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"\nconst fs = require\\('fs'\\);\n// Check all key source files parse as valid JSON or JS\n['package.json','app.json'].forEach\\(f => {\n  try { JSON.parse\\(fs.readFileSync\\(f,'utf8'\\)\\); console.log\\('✓', f\\); }\n  catch\\(e\\) { console.error\\('✗', f, e.message\\); }\n}\\);\nconsole.log\\('Source files present:', [\n  'app/_layout.tsx',\n  'app/\\(tabs\\)/_layout.tsx',\n  'app/\\(tabs\\)/index.tsx',\n  'app/\\(tabs\\)/news.tsx',\n  'app/\\(tabs\\)/saved.tsx',\n  'app/confirmation.tsx',\n  'app/story.tsx',\n  'backend/server.js',\n  'utils/types.ts',\n  'utils/storage.ts',\n  'utils/geocoding.ts',\n  'components/NewsCard.tsx',\n  'components/StoryCard.tsx',\n  'constants/Colors.ts',\n].map\\(f => fs.existsSync\\(f\\) ? '✓ '+f : '✗ MISSING '+f\\).join\\('\\\\n'\\)\\);\n\")",
+      "Bash(cd /Users/cindymin/HOTH/WanderSpot/backend && node -e \"\nrequire\\('dotenv'\\).config\\(\\);\nconst express = require\\('express'\\);\nconst cors = require\\('cors'\\);\nconst axios = require\\('axios'\\);\nconst { GoogleGenerativeAI } = require\\('@google/generative-ai'\\);\nconsole.log\\('✓ All backend dependencies load correctly'\\);\n\")"
+    ]
+  }
+}

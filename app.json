@@ -1,0 +1,68 @@
+{
+  "expo": {
+    "name": "WanderSpot",
+    "slug": "wanderspot",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "wanderspot",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f0f0f"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.wanderspot.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "WanderSpot uses your camera to capture the street you are standing on.",
+        "NSLocationWhenInUseUsageDescription": "WanderSpot uses your location to identify the street and find local stories.",
+        "NSPhotoLibraryUsageDescription": "WanderSpot saves photos of streets you explore."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#0f0f0f"
+      },
+      "package": "com.wanderspot.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "WanderSpot uses your camera to capture streets you explore."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "WanderSpot uses your location to identify local streets and find nearby stories."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "WanderSpot accesses your photos to let you choose a street image."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
