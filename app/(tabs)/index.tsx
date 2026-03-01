@@ -24,7 +24,7 @@ import {
 } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as Location from 'expo-location';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -79,7 +79,7 @@ export default function ExploreScreen() {
   if (!cameraPermission.granted) {
     return (
       <View style={styles.centered}>
-        <Ionicons name="camera-off-outline" size={48} color={Colors.textSecondary} />
+        <Ionicons name="camera-outline" size={48} color={Colors.textSecondary} />
         <Text style={styles.permissionTitle}>Camera access needed</Text>
         <Text style={styles.permissionSubtitle}>
           WanderSpot uses your camera to capture the street you're standing on.

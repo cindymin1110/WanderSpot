@@ -34,7 +34,6 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
 import { Colors } from '@/constants/Colors';
 import { Story, StoryMode } from '@/utils/types';
 import { saveStory, getStoryById } from '@/utils/storage';
@@ -74,8 +73,12 @@ export default function StoryScreen() {
       setError(null);
 
       // Read the photo as base64 to send to the backend (Claude vision)
-      const photoBase64 = await FileSystem.readAsStringAsync(photoUri, {
-        encoding: FileSystem.EncodingType.Base64,
+      const photoBlob = await fetch(photoUri).then((r) => r.blob());
+      const photoBase64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(photoBlob);
       });
 
       // POST to backend /api/story
