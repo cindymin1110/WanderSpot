@@ -25,6 +25,7 @@ import {
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as Location from 'expo-location';
 import * as FileSystem from 'expo-file-system';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
@@ -136,6 +137,54 @@ export default function ExploreScreen() {
     }
   };
 
+  // ── Upload from library ───────────────────────────────────────────────────
+  const handleUpload = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Please allow access to your photo library to upload a street view.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.75,
+      allowsEditing: false,
+    });
+
+    if (result.canceled || !result.assets?.[0]?.uri) return;
+
+    setCapturing(true);
+    try {
+      // Copy to permanent document directory so the URI stays valid
+      const permanentUri = FileSystem.documentDirectory + `photo_${Date.now()}.jpg`;
+      await FileSystem.copyAsync({ from: result.assets[0].uri, to: permanentUri });
+
+      // Get current GPS coordinates — location is always from device, not the image
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      const { latitude: lat, longitude: lng } = location.coords;
+
+      const geo = await reverseGeocode(lat, lng);
+
+      router.push({
+        pathname: '/confirmation',
+        params: {
+          photoUri: permanentUri,
+          lat: String(lat),
+          lng: String(lng),
+          streetName: geo.streetName,
+          city: geo.city,
+        },
+      });
+    } catch (err: any) {
+      console.error('[ExploreScreen] handleUpload error:', err);
+      Alert.alert('Upload failed', err.message || 'Please try again.');
+    } finally {
+      setCapturing(false);
+    }
+  };
+
   // ── Flip camera ───────────────────────────────────────────────────────────
   const toggleFacing = () => {
     setFacing((prev) => (prev === 'back' ? 'front' : 'back'));
@@ -176,8 +225,10 @@ export default function ExploreScreen() {
             )}
           </TouchableOpacity>
 
-          {/* Placeholder to balance the layout */}
-          <View style={styles.flipButton} />
+          {/* Upload from library button */}
+          <TouchableOpacity style={styles.flipButton} onPress={handleUpload} disabled={capturing}>
+            <Ionicons name="image-outline" size={28} color={Colors.text} />
+          </TouchableOpacity>
         </View>
       </CameraView>
 
