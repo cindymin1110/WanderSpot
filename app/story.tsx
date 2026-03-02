@@ -38,6 +38,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { Story, StoryMode } from '@/utils/types';
 import { saveStory, getStoryById } from '@/utils/storage';
+import Markdown from 'react-native-markdown-display';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001';
 
@@ -251,7 +252,7 @@ export default function StoryScreen() {
       <View style={styles.divider} />
 
       {/* Story text */}
-      <Text style={styles.storyText}>{story.content}</Text>
+      <Markdown style={markdownStyles}>{story.content}</Markdown>
 
       {/* Share button */}
       <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
@@ -266,7 +267,33 @@ export default function StoryScreen() {
     </ScrollView>
   );
 }
-
+const markdownStyles = {
+  body: {
+    color: '#ffffff',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  heading1: {
+    color: '#ffffff',
+    fontSize: 22,
+    fontWeight: 'bold' as const,
+    marginBottom: 8,
+  },
+  heading2: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold' as const,
+    marginBottom: 6,
+  },
+  strong: {
+    color: '#ffffff',
+    fontWeight: 'bold' as const,
+  },
+  em: {
+    color: '#cccccc',
+    fontStyle: 'italic' as const,
+  },
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
