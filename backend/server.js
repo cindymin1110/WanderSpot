@@ -92,7 +92,7 @@ function articlesToContext(articles) {
  */
 app.post('/api/story', async (req, res) => {
   try {
-    const { photoBase64, lat, lng, streetName, mode } = req.body;
+    const { photoBase64, lat, lng, streetName, city, mode } = req.body;
 
     // Validate required fields
     if (!photoBase64 || !lat || !lng || !streetName || !mode) {
@@ -101,15 +101,16 @@ app.post('/api/story', async (req, res) => {
 
     let newsContext = '';
 
-    // For news mode: fetch recent articles to give Claude real local context
+    // For news mode: fetch recent articles using the city for broader, more
+    // relevant results, then fall back to streetName if city is absent.
     if (mode === 'news') {
-      // Use the street name + city as the search query for NewsAPI
-      const articles = await fetchNews(streetName, 5);
+      const newsQuery = city || streetName;
+      const articles = await fetchNews(newsQuery, 5);
 
       if (articles.length > 0) {
         newsContext = `\n\nRecent local news articles:\n${articlesToContext(articles)}`;
       } else {
-        newsContext = '\n\n(No recent local news articles found. Do your best with general knowledge.)';
+        newsContext = '\n\n(No recent local news articles found for this area.)';
       }
     }
 

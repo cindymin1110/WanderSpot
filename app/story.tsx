@@ -63,7 +63,7 @@ export default function StoryScreen() {
 
   // ── Generate a new story by calling the backend ───────────────────────────
   const generateStory = useCallback(async () => {
-    const { photoUri, lat, lng, streetName, mode } = params;
+    const { photoUri, lat, lng, streetName, city, mode } = params;
     if (!photoUri || !lat || !lng || !streetName || !mode) {
       setError('Missing required parameters to generate a story.');
       setLoading(false);
@@ -103,6 +103,7 @@ export default function StoryScreen() {
           lat: parseFloat(lat),
           lng: parseFloat(lng),
           streetName,
+          city,
           mode,
         }),
       });
