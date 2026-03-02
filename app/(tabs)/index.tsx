@@ -105,9 +105,15 @@ export default function ExploreScreen() {
 
       if (!photo?.uri) throw new Error('No photo URI returned from camera');
 
-      // Copy to permanent document directory so the URI stays valid
-      const permanentUri = FileSystem.documentDirectory + `photo_${Date.now()}.jpg`;
-      await FileSystem.copyAsync({ from: photo.uri, to: permanentUri });
+      // Copy to permanent document directory so the URI stays valid (native only;
+      // on web the camera returns a blob URL that's valid for the session)
+      let permanentUri: string;
+      if (Platform.OS === 'web') {
+        permanentUri = photo.uri;
+      } else {
+        permanentUri = FileSystem.documentDirectory + `photo_${Date.now()}.jpg`;
+        await FileSystem.copyAsync({ from: photo.uri, to: permanentUri });
+      }
 
       // Get current GPS coordinates
       // Force fresh location by skipping cache entirely
@@ -148,6 +154,7 @@ export default function ExploreScreen() {
       return;
     }
 
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 0.75,
@@ -158,9 +165,15 @@ export default function ExploreScreen() {
 
     setCapturing(true);
     try {
-      // Copy to permanent document directory so the URI stays valid
-      const permanentUri = FileSystem.documentDirectory + `photo_${Date.now()}.jpg`;
-      await FileSystem.copyAsync({ from: result.assets[0].uri, to: permanentUri });
+      // Copy to permanent document directory so the URI stays valid (native only;
+      // on web ImagePicker returns a blob URL that's valid for the session)
+      let permanentUri: string;
+      if (Platform.OS === 'web') {
+        permanentUri = result.assets[0].uri;
+      } else {
+        permanentUri = FileSystem.documentDirectory + `photo_${Date.now()}.jpg`;
+        await FileSystem.copyAsync({ from: result.assets[0].uri, to: permanentUri });
+      }
 
       // Get current GPS coordinates — location is always from device, not the image
       const location = await Location.getCurrentPositionAsync({

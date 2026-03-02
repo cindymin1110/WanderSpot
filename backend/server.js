@@ -38,7 +38,8 @@ Your job is to tell the user about this place in a warm, vivid, narrative style
  Always base your story on real information. 
  Do not invent historical facts. If the mode is 'overview', 
  research and narrate the cultural character, history, and significance 
- of this street and area in around 200 words. If the mode is 'news', 
+ of this street and area in around 200 words, with highlight on any historical significance found. 
+ If the mode is 'news', 
  weave the provided real news articles into a short narrative that 
  captures what life is like here right now, in around 200 words. 
  Always end with one interesting thing the user might not know about this place.`;
@@ -118,7 +119,7 @@ app.post('/api/story', async (req, res) => {
         type: 'image',
         source: {
           type: 'base64',
-          media_type: 'image/jpeg',
+          media_type: photoBase64.startsWith('/9j/') ? 'image/jpeg' : 'image/png',
           data: photoBase64,
         },
       },

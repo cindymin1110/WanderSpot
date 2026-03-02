@@ -21,6 +21,7 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
+import { File, Paths } from 'expo-file-system';
 import {
   View,
   Text,
@@ -29,8 +30,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Alert,
   Share,
+  Platform,
 } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -73,13 +74,24 @@ export default function StoryScreen() {
       setError(null);
 
       // Read the photo as base64 to send to the backend (Claude vision)
-      const photoBlob = await fetch(photoUri).then((r) => r.blob());
-      const photoBase64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve((reader.result as string).split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(photoBlob);
-      });
+      let photoBase64: string;
+
+      if (Platform.OS === 'web') {
+        const blob = await fetch(photoUri).then((r) => r.blob());
+        photoBase64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            resolve((reader.result as string).split(',')[1]);
+          };
+          reader.readAsDataURL(blob);
+        });
+      } else {
+        const uniqueName = `temp_photo_${Date.now()}.jpg`;
+        const tempFile = new File(Paths.cache, uniqueName);
+        new File(photoUri).copy(tempFile);
+        photoBase64 = await tempFile.base64();
+      }
+      
 
       // POST to backend /api/story
       const response = await fetch(`${API_URL}/api/story`, {
