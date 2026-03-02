@@ -110,8 +110,11 @@ export default function ExploreScreen() {
       await FileSystem.copyAsync({ from: photo.uri, to: permanentUri });
 
       // Get current GPS coordinates
+      // Force fresh location by skipping cache entirely
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
+        timeInterval: 0,
+        distanceInterval: 0,
       });
       const { latitude: lat, longitude: lng } = location.coords;
 
